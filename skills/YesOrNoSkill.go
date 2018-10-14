@@ -3,6 +3,7 @@ package skills
 import (
 	"fmt"
 	"geoffrey/api"
+	"geoffrey/types"
 )
 
 var responseOptionMap = map[api.YesOrNoAnswer] []string {
@@ -31,22 +32,18 @@ var responseOptionMap = map[api.YesOrNoAnswer] []string {
 	},
 }
 
-func yesOrNoSkill(bodyMap map[string] string) bool {
+func yesOrNoSkill(message types.GroupMeMessagePost) bool {
 	// First check if geoffrey is mentioned
-	if (!isGeoffreyMentioned(bodyMap[postBodyMessageText])) {
+	if (!isGeoffreyMentioned(message.MessageText)) {
 		return false
 	}
 
-	messageTextWithoutMention := stripGeoffreyMentions(bodyMap[postBodyMessageText])
-
-	fmt.Printf("yes or no; text: %v\n", messageTextWithoutMention)
+	messageTextWithoutMention := stripGeoffreyMentions(message.MessageText)
 
 	// Next check if it's a yes or no question
 	if (!isYesOrNoQuestion(messageTextWithoutMention)) {
 		return false
 	}
-
-	fmt.Println("passed")
 
 	response, err := api.GetYesOrNo()
 

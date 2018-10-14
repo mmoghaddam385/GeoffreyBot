@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"geoffrey/skills"
+	"geoffrey/types"
 	"encoding/json"
 	"io/ioutil"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 )
 
 const postBodyMessageId = "id"
+const postBodyMessageText = "text"
 const postBodyGroupId = "group_id"
 const postBodySenderName = "name"
 const postBodySenderType = "sender_type"
@@ -27,27 +29,40 @@ func messageRecieved(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Printf("Super raw: %v", string(body))
+	bodyMap := make(map[string] interface{})
+	err = json.Unmarshal(body, &bodyMap)
 
-	bodyMap := make(map[string] string)
-	json.Unmarshal(body, &bodyMap)
+	if (err != nil) {
+		fmt.Printf("Error unmarshalling body into map; %v", err)
+		return
+	}
 
 	logMessage(bodyMap)
+	message := buildMessageStruct(bodyMap)
 
 	// Only process messages from humans
-	if (bodyMap[postBodySenderType] != "user") {
+	if (message.SenderType != "user") {
 		return
 	}
 
 	for _, skill := range skills.GetActiveSkills() {
-		if (skill(bodyMap)) {
+		if (skill(message)) {
 			break
 		}
 	}
 }
 
-func logMessage(body map[string] string) {
-	fmt.Printf("raw: %v", body)
-	fmt.Println("Message: " + body["text"])
+func buildMessageStruct(bodyMap map[string] interface{}) types.GroupMeMessagePost {
+	var msg types.GroupMeMessagePost
+	msg.Id = bodyMap[postBodyMessageId].(string)
+	msg.GroupId = bodyMap[postBodyGroupId].(string)
+	msg.Sender = bodyMap[postBodySenderName].(string)
+	msg.SenderType = bodyMap[postBodySenderType].(string)
+	msg.MessageText = bodyMap[postBodyMessageText].(string)
+
+	return msg
+}
+
+func logMessage(body map[string] interface{}) {
 	fmt.Printf("Message (id: %v) from %v in group %v\n", body[postBodyMessageId], body[postBodySenderName], body[postBodyGroupId])
 }

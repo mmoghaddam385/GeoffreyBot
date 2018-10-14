@@ -1,6 +1,7 @@
 package skills
 
 import (
+	"geoffrey/types"
 	"geoffrey/api"
 	"fmt"
 	"strings"
@@ -17,14 +18,14 @@ var answerOptions = []string {
 	"Listen that's not my problem buddy good luck figuring it out though.",
 }
 
-func genericQuestionSkill(bodyMap map[string] string) bool {
+func genericQuestionSkill(message types.GroupMeMessagePost) bool {
 
 	// First check if geoffrey is mentioned
-	if (!isGeoffreyMentioned(bodyMap[postBodyMessageText])) {
+	if (!isGeoffreyMentioned(message.MessageText)) {
 		return false
 	}
 
-	messageTextWithoutMention := stripGeoffreyMentions(bodyMap[postBodyMessageText])
+	messageTextWithoutMention := stripGeoffreyMentions(message.MessageText)
 
 	// Next check if it's a question
 	if (!isQuestion(messageTextWithoutMention)) {

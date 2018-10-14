@@ -39,15 +39,11 @@ func PostGroupMeMessageWithPicture(message string, imageUrl string) {
 		return
 	}
 
-	fmt.Printf("sending gm message w/ picture: %v\n%v\n", message, imageUrl)
-	
 	body := fmt.Sprintf(`{
 		"bot_id": "%v",
 		"text": "%v",
 		"picture_url": "%v"
 	}`, id, message, imageUrl)
-
-	fmt.Printf("post bost: %v\n", body)
 
 	postGroupMeMessage(body)
 }

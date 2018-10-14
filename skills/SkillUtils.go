@@ -7,8 +7,8 @@ import (
 )
 
 var aliases = []string {
-	"geoff",
 	"geoffrey",
+	"geoff",
 }
 
 const postBodyMessageText = "text"

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"geoffrey/api"
+	"geoffrey/types"
 )
 
 var greetingOptions = []string {
@@ -24,8 +25,8 @@ var factPrefixOptions = []string {
 
 // catFactSkill sends the group a cat fact if geoffrey is 
 // mentioned in a message
-func catFactSkill(bodyMap map[string] string) bool {
-	if (!isGeoffreyMentioned(bodyMap[postBodyMessageText])) {
+func catFactSkill(message types.GroupMeMessagePost) bool {
+	if (!isGeoffreyMentioned(message.MessageText)) {
 		return false
 	}
 
@@ -34,7 +35,7 @@ func catFactSkill(bodyMap map[string] string) bool {
 	go api.GetCatFactAsync(catFactChannel)
 
 	// Get only the first name of the sender
-	sender := bodyMap[postBodySenderName]
+	sender := message.Sender
 	indexOfSpace := strings.Index(sender, " ")
 	if indexOfSpace > 0 {
 		sender = sender[:indexOfSpace]
