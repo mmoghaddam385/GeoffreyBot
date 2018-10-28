@@ -43,6 +43,8 @@ func catFactSkill(message types.GroupMeMessagePost) bool {
 
 	greeting := fmt.Sprintf(pickRandomFromStringArray(greetingOptions), sender)
 	factFormat := string(pickRandomFromStringArray(factPrefixOptions))
+	factWithoutPunctuation := factFormat[:len(factFormat) - 1]
+	factPunctuation := string(factFormat[len(factFormat) - 1])
 	
 	catFactResult := <-catFactChannel
 
@@ -51,22 +53,23 @@ func catFactSkill(message types.GroupMeMessagePost) bool {
 		return false
 	}
 
-	fact := formatCatFact(catFactResult.Result)
+	fact := formatCatFact(catFactResult.Result, factPunctuation)
 
-	finalMessage := greeting + " " + fmt.Sprintf(factFormat, fact)
+	finalMessage := greeting + " " + fmt.Sprintf(factWithoutPunctuation, fact)
 	api.PostGroupMeMessage(finalMessage)
 
 	return true
 }
 
-func formatCatFact(fact string) string {
-	firstLetter := strings.ToLower(fact[:1])
-	lastLetter := fact[len(fact) - 1]
-
-	// Chop off punctuation if it's there
-	if (lastLetter == '.' || lastLetter == '?' || lastLetter == '!') {
-		return firstLetter + fact[1:len(fact) - 1]
-	} else {
-		return firstLetter + fact[1:]
+func formatCatFact(fact string, punctuation string) string {
+	// Some cat facts are multiple sentences, find the first punctuation so we can replace it later
+	var puncuationIndex = strings.IndexAny(fact, ".?!")
+	if puncuationIndex == -1 {
+		puncuationIndex = len(fact) - 1
 	}
+
+	// Force the first letter to be lower case
+	firstLetter := strings.ToLower(fact[:1])
+
+	return firstLetter + fact[1:puncuationIndex] + punctuation + fact[puncuationIndex+1:]
 }
