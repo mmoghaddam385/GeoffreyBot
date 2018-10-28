@@ -8,3 +8,16 @@ type GroupMeMessagePost struct {
 	SenderType string
 	MessageText string
 }
+
+type ConsoleCommand interface {
+	// Name returns the name of this command
+	Name() string
+
+	// Usage returns a short help string to be displayed when the user asks
+	// for help
+	Usage() string
+
+	// Execute should run the command and return a result code.
+	// 0 for success, anything else for error
+	Execute(args []string) int
+}
