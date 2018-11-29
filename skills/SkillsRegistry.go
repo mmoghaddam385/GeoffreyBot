@@ -11,6 +11,7 @@ type ActiveSkill func(types.GroupMeMessagePost) bool
 var activeSkills = []ActiveSkill {
 	yesOrNoSkill,
 	genericQuestionSkill,
+	summonSkill,
 	catFactSkill,
 }
 

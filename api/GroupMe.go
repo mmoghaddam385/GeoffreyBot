@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"fmt"
 	"os"
+	"strconv"
+	"geoffrey/types"
 )
 
 const groupMeBaseUrl = "https://api.groupme.com/v3"
@@ -44,6 +46,40 @@ func PostGroupMeMessageWithPicture(message string, imageUrl string) {
 		"text": "%v",
 		"picture_url": "%v"
 	}`, id, message, imageUrl)
+
+	postGroupMeMessage(body)
+}
+
+func PostGroupMeMessageWithMentions(message string, mentions ...types.GroupMeMessageMention) {
+	id := getBotId()
+	if (id == "") {
+		fmt.Printf("Cannot send message; $%v environment variable not set\n", botIdEnvironmentVar)
+		return
+	}
+
+	var lociArr = ""
+	var userIdArr = ""
+
+	if (len(mentions) > 0) {
+		for _, mention := range(mentions) {
+			lociArr += "[" + strconv.Itoa(mention.StartIndex) + "," + strconv.Itoa(mention.Length) + "],"
+			userIdArr += `"` + mention.UserId + `",`
+		}
+
+		// Cut off extra commas
+		lociArr = lociArr[:len(lociArr)-1]
+		userIdArr = userIdArr[:len(userIdArr)-1]
+	}
+
+	body := fmt.Sprintf(`{
+			"bot_id": "%v",
+			"text": "%v",
+			"attachments": [{
+				"type": "mentions",	
+				"loci": [%v],
+				"user_ids": [%v]
+			}]
+		}`, botId, message, lociArr, userIdArr)
 
 	postGroupMeMessage(body)
 }
