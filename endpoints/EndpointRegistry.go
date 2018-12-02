@@ -9,6 +9,7 @@ type HandlerFunc func(http.ResponseWriter, *http.Request)
 var endpoints = map[string] HandlerFunc {
 	"/" : fallbackHandler,
 	"/message" : messageRecieved,
+	"/skill/passive" : passiveSkillRequest,
 }
 
 // GetAllEndpoints returns all registered endpoints in a map

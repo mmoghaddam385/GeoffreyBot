@@ -1,20 +1,19 @@
 package skills
 
 import (
+	"os"
 	"geoffrey/api"
 	"geoffrey/types"
 )
 
-func summonSkill(message types.GroupMeMessagePost) bool {
-
+// summons the beast...
+func summonSkill() {
 	var messageText = "@Kaie Westmaas"
 	var mention = types.GroupMeMessageMention {
-		UserId: "1234",
+		UserId: os.Getenv("SUMMON_USER_ID"),
 		StartIndex: 0,
 		Length: len(messageText),
 	}
 
 	api.PostGroupMeMessageWithMentions(messageText, mention)
-
-	return true;
 }
