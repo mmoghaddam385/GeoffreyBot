@@ -3,6 +3,7 @@ package endpoints
 import (
 	"net/http"
 	"fmt"
+	"os"
 
 	"geoffrey/api"
 	"geoffrey/skills"
@@ -12,7 +13,6 @@ const skillNameQueryParam = "skill"
 
 const rescheduleQueryParam = "reschedule"
 const rescheduleWeekQueryParam = "week"
-const rescheduleURL = "TODO"
 
 func passiveSkillRequest(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Passive Skill Request recieved!!");
@@ -42,7 +42,8 @@ func passiveSkillRequest(w http.ResponseWriter, r *http.Request) {
 	if ok && len(rescheduleParams) >= 1 {
 		if rescheduleParams[0] == rescheduleWeekQueryParam {
 			fmt.Println("Rescheduling event for ~1 week")
-			api.ScheduleSingleEventInAWeek(rescheduleURL)
+			fmt.Printf("rescheuling at: %v\n", getServerName() + r.URL.RequestURI())
+			api.ScheduleSingleEventInAWeek(getServerName() + r.URL.RequestURI())
 		} else {
 			fmt.Printf("Unexpected reschedule duration: %t\n", rescheduleParams[0])
 			w.WriteHeader(400)
@@ -51,4 +52,8 @@ func passiveSkillRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(200)
+}
+
+func getServerName() string {
+	return os.Getenv("SELF_URL")
 }
