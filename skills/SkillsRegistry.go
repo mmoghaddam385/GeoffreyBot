@@ -1,6 +1,9 @@
 package skills
 
 import (
+	"fmt"
+	"time"
+	"math/rand"
 	"geoffrey/types"
 )
 
@@ -16,7 +19,7 @@ type PassiveSkill func()
 var activeSkills = []ActiveSkill {
 	yesOrNoSkill,
 	genericQuestionSkill,
-	catFactSkill,
+	catFactActiveSkill,
 }
 
 // GetActiveSkills returns all registered active  skills in order or priority
@@ -25,9 +28,29 @@ func GetActiveSkills() []ActiveSkill {
 }
 
 var passiveSkills = map[string] PassiveSkill {
-	"summon-skill": summonSkill,
+	"summon": summonSkill,
+	"cat-fact": catFactPassiveSkill,
+	"roast": roasterPassiveSkill,
 }
 
 func GetPassiveSkillByName(name string) PassiveSkill {
+	if (name == "random") {
+		rand.Seed(time.Now().Unix())
+
+		// Calculate the random index to use
+		var target = rand.Intn(len(passiveSkills))
+		var idx = 0
+		// Iterate over the map until we hit target, then return the skill
+		// Side note: I can't believe there isn't a better way to do this :\ 
+		for name, skill := range passiveSkills {
+			if (idx == target) {
+				fmt.Printf("Getting random skill...%v\n", name)
+				return skill
+			}
+
+			idx++
+		}
+	}
+	
 	return passiveSkills[name]
 }
