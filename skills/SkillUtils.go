@@ -4,6 +4,9 @@ import (
 	"math/rand"
 	"time"
 	"strings"
+
+	"geoffrey/api"
+	"geoffrey/types"
 )
 
 var aliases = []string {
@@ -72,4 +75,23 @@ func isYesOrNoQuestion(message string) bool {
 func pickRandomFromStringArray(arr []string) string {
 	rand.Seed(time.Now().Unix())
 	return arr[rand.Int() % len(arr)]
+}
+
+var errorMessageOptions = []string {
+	"I don't feel so good...",
+	"Maybe try checking my logs every once in a while :/",
+	"I've got a cyber stomach ache pls help",
+}
+
+// postErrorMessage sends a message to the groupme indicating something went wrong
+func postErrorMessage() {
+	mention := types.GroupMeMessageMention {
+		UserId: "20626795",
+		StartIndex: 0,
+		Length: len("@Michael Moghaddam"),
+	}
+
+	message := "@Michael Moghaddam " + pickRandomFromStringArray(errorMessageOptions)
+
+	api.PostGroupMeMessageWithMentions(message, mention)
 }

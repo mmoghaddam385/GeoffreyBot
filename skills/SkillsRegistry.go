@@ -31,6 +31,8 @@ var passiveSkills = map[string] PassiveSkill {
 	"summon": summonSkill,
 	"cat-fact": catFactPassiveSkill,
 	"roast": roasterPassiveSkill,
+	"nostalgia": nostalgiaPassiveSkill,
+	"nostalgia-rand-bump": nostalgiaPassiveSkill, // Bump up the likelihood of this skill getting picked randomly
 }
 
 func GetPassiveSkillByName(name string) PassiveSkill {

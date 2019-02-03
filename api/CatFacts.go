@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"errors"
+	"strings"
 )
 
 const catFactsBaseUrl = "https://catfact.ninja"
@@ -30,7 +31,7 @@ func GetCatFact() (string, error) {
 	}
 
 	if fact, exists := body[catFactFactKey]; exists {
-		return fact, nil
+		return sanitizeCatFact(fact), nil
 	} else {
 		return "", errors.New("Could not parse fact out of response body!")
 	}
@@ -39,4 +40,9 @@ func GetCatFact() (string, error) {
 func GetCatFactAsync(channel chan StringResult) {
 	fact, err := GetCatFact()
 	channel <- StringResult{fact, err}
+}
+
+func sanitizeCatFact(fact string) string {
+	fact = strings.Replace(fact, "\"", "'", -1) // Remove quote marks
+	return strings.Replace(fact, "\\", "", -1) // Remove backslashes
 }
