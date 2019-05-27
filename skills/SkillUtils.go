@@ -62,7 +62,7 @@ func isYesOrNoQuestion(message string) bool {
 	message = strings.ToLower(message)
 
 	// Now check if it starts with a yes/no question starter
-	for _, starter := range []string { "do", "should", "will", "am", "is", "are" } {
+	for _, starter := range []string { "do", "did", "should", "will", "am", "is", "are" } {
 		if (strings.Contains(message, starter)) {
 			return true
 		}
